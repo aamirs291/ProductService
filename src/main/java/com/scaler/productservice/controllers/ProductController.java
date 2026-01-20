@@ -1,5 +1,7 @@
 package com.scaler.productservice.controllers;
 
+import com.scaler.productservice.dtos.ProductRequestDTO;
+import com.scaler.productservice.dtos.ProductResponseDTO;
 import com.scaler.productservice.exceptions.CategoryNotFoundException;
 import com.scaler.productservice.exceptions.ProductNotFoundException;
 import com.scaler.productservice.models.Product;
@@ -18,41 +20,32 @@ public class ProductController {
     private final ProductService productService;
     private final RestTemplate restTemplate;
 
-    public ProductController(@Qualifier("selfProductService") ProductService productService, RestTemplate restTemplate) {
+    public ProductController(@Qualifier("defaultProductService") ProductService productService, RestTemplate restTemplate) {
         this.productService = productService;
         this.restTemplate = restTemplate;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getSingleProduct(@PathVariable("id") Long id) throws ProductNotFoundException {
-
-        return new ResponseEntity<>(productService.getSingleProduct(id), HttpStatus.OK);
-        //return
-//        Product product = null;
-//        ResponseEntity<Product> responseEntity = null;
-//        try{
-//            product = productService.getSingleProduct(id);
-//            responseEntity = new ResponseEntity<>(product, HttpStatus.OK);
-//        } catch (RuntimeException e) {
-//            e.printStackTrace();
-////            responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }catch(ProductNotFoundException e){
-//            e.printStackTrace();
-//            responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//        return responseEntity;
-//        //return productService.getSingleProduct(id);
+    public ResponseEntity<ProductResponseDTO> getSingleProduct(@PathVariable("id") Long id) throws ProductNotFoundException {
+        ProductResponseDTO productResponseDTO = productService.getSingleProduct(id);
+        return ResponseEntity.ok(productResponseDTO);
     }
 
-    @GetMapping("/")
-    public List<Product> getAllProducts(){
+    @GetMapping
+    public ResponseEntity<List<ProductResponseDTO>> getAllProducts(){
         //return new ArrayList<>();
-        return productService.getAllProducts();
+        return ResponseEntity.ok(productService.getAllProducts());
+    }
+
+    @GetMapping(params = "categoryId")
+    public ResponseEntity<List<ProductResponseDTO>> getProductsByCategory(@RequestParam Long categoryId){
+        List<ProductResponseDTO> productResponseDTOs = productService.getProductsByCategory(categoryId);
+        return ResponseEntity.ok(productResponseDTOs);
     }
 
     @PostMapping
-    public Product createProduct(@RequestBody Product product) throws CategoryNotFoundException {
-        return productService.createProduct(product);
+    public ProductResponseDTO createProduct(@RequestBody ProductRequestDTO productRequestDTO) throws CategoryNotFoundException {
+        return productService.createProduct(productRequestDTO);
     }
 
     @DeleteMapping("/{id}")

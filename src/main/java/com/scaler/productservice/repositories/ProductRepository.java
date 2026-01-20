@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,25 +20,27 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findAll();
 
-    @Query("SELECT p FROM products p WHERE p.id=?1")
-    Optional<Product> findProductWithGivenId(Long productId);
-
-//    List<Product> findByTitleContainsIgnoreCase(String title);
+    @Query("""
+    SELECT p FROM products p
+    JOIN FETCH p.category""")
+    List<Product> findAllWithCategory();
 
     Page<Product> findByTitleContainsIgnoreCase(String title, Pageable pageable);
 
     List<Product> findByPriceBetween(Double priceAfter, Double priceBefore);
 
-    List<Product> findByCategory(Category category);
+    // List<Product> findByCategory(Category category);
 
-    List<Product> findAllByCategory_Id(Long categoryId);
+    @Query("""
+    SELECT p
+    FROM products p
+    JOIN FETCH p.category
+    WHERE p.category.id = :categoryId""")
+    List<Product> findByCategoryId(@Param("categoryId") Long categoryId);
 
-    List<Product> findAllByCategory_Title(String categoryTitle);
+    // List<Product> findByCategoryTitle(String categoryTitle);
 
-//    @Query("FROM com.scaler.ecomm_productservice.models.Product AS p WHERE p.id = :id")
-//    Product findProductWithGivenId(Long id);
+    // Product save(Product product);
 
-    Product save(Product product);
-
-    void deleteById(Long productId);
+    // void deleteById(Long productId);
 }

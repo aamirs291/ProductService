@@ -15,12 +15,12 @@ public class SpringSecurityConfig {
             throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().authenticated()
+                                .anyRequest().authenticated()
 //                                .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
-                .cors().disable()
-                .csrf().disable();
+                .cors(cors -> cors.disable())
+                .csrf(csrf -> csrf.disable());
                 // Form login handles the redirect to the login page from the
                 // authorization server filter chain
         return http.build();

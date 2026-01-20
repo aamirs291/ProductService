@@ -1,5 +1,8 @@
 package com.scaler.productservice.services;
 
+import com.scaler.productservice.dtos.CategoryDTO;
+import com.scaler.productservice.dtos.ProductRequestDTO;
+import com.scaler.productservice.dtos.ProductResponseDTO;
 import com.scaler.productservice.exceptions.CategoryNotFoundException;
 import com.scaler.productservice.exceptions.ProductNotFoundException;
 import com.scaler.productservice.models.Product;
@@ -9,15 +12,16 @@ import java.util.List;
 
 public interface ProductService {
 
-    Product getSingleProduct(Long productId) throws ProductNotFoundException;
+    ProductResponseDTO getSingleProduct(Long productId) throws ProductNotFoundException;
 
-    List<Product> getAllProducts();
+    List<ProductResponseDTO> getAllProducts();
 
-    Product createProduct(Product product) throws CategoryNotFoundException;
+    ProductResponseDTO createProduct(ProductRequestDTO productRequest) throws CategoryNotFoundException;
 
     void deleteProduct(Long productId);
 
-    List<Product> getProductsByCategory(Long categoryId);
+    List<ProductResponseDTO> getProductsByCategory(Long categoryId);
 
     Page<Product> getProductsByTitle(String title, int pageNumber, int pageSize);
+
 }
